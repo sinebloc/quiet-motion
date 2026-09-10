@@ -1,0 +1,12 @@
+quiet-motion
+Copyright 2026 Sinebloc
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. A copy of the License is
+included in this repository as LICENSE, and may also be obtained at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+The Gradle wrapper is derived from the Gradle build tool, and from
+Kotlin/kmp-app-template (https://github.com/Kotlin/kmp-app-template), both
+licensed under the Apache License, Version 2.0.

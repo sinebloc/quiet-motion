@@ -1,0 +1,21 @@
+[versions]
+# Compose Multiplatform pins a strict Kotlin range — check the compatibility table
+# before bumping either of these:
+# https://kotlinlang.org/docs/multiplatform/compose-compatibility-and-versioning.html
+agp = "9.1.0"
+kotlin = "2.4.10"
+compose-multiplatform = "1.11.1"
+
+android-compileSdk = "36"
+android-minSdk = "24"
+
+[libraries]
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-multiplatform" }
+compose-animation = { module = "org.jetbrains.compose.animation:animation", version.ref = "compose-multiplatform" }
+compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose-multiplatform" }
+
+[plugins]
+androidMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
+composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
