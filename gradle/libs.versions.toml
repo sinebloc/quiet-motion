@@ -5,6 +5,8 @@
 agp = "9.1.0"
 kotlin = "2.4.10"
 compose-multiplatform = "1.11.1"
+# 0.37.0, released 2026-06-21. Targets the Central Portal, not legacy OSSRH.
+maven-publish = "0.37.0"
 
 android-compileSdk = "36"
 android-minSdk = "24"
@@ -19,3 +21,4 @@ androidMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.library",
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+mavenPublish = { id = "com.vanniktech.maven.publish", version.ref = "maven-publish" }

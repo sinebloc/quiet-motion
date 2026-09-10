@@ -15,17 +15,44 @@ Two problems, both small, both easy to get wrong:
 
 This library is the answer to both, in about 300 lines.
 
+## Platforms
+
+| Target | Reduce-motion detected from |
+|---|---|
+| Android | Animator duration scale — what **Accessibility → Remove animations** writes to |
+| iOS (`iosArm64`, `iosSimulatorArm64`) | `UIAccessibilityIsReduceMotionEnabled` |
+| JVM / desktop | Nothing — see below |
+
+Desktop has no portable reduce-motion setting, so `prefersReducedMotion()` answers
+`false` there. That does not leave you stuck: every primitive here multiplies by
+`LocalMotionScale`, so provide the scale yourself and the whole library obeys it.
+`rememberMotionScale()` is a convenience for the two platforms that can answer for
+themselves, not the only way in.
+
+No `iosX64`: Compose Multiplatform 1.11.x publishes no artifacts for the Intel-Mac
+simulator, so the dependency could not resolve there anyway.
+
 ## Install
 
-Not on Maven Central yet. For now, either clone and `./gradlew publishToMavenLocal`, or
-vendor `src/commonMain`, `src/androidMain` and `src/iosMain` into a module of your own.
+Publishing to Maven Central is wired up but **the first release has not been cut yet**
+(it needs namespace verification and a signing key — see [RELEASING.md](RELEASING.md)).
+Until then, clone this repo and:
+
+```
+./gradlew publishToMavenLocal
+```
+
+Then, with `mavenLocal()` in your repositories:
 
 ```kotlin
 // build.gradle.kts
 commonMain.dependencies {
-    implementation("com.sinebloc.quietmotion:quiet-motion:0.1.0")
+    implementation("com.sinebloc:quiet-motion:0.1.0")
 }
 ```
+
+Compose pulls transitive `androidx` artifacts, so your repositories need `google()`
+alongside `mavenCentral()` — as any Compose Multiplatform consumer does.
 
 ## Provide the scale once
 
