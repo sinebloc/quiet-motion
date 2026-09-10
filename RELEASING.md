@@ -1,15 +1,18 @@
 # Releasing
 
-Publishing is wired (`com.vanniktech.maven.publish` 0.37.0, targeting the Central
-Portal). What is left is account-level setup that needs credentials, and it is one-time.
+`0.1.0` is published. Publishing runs through `com.vanniktech.maven.publish` 0.37.0
+against the Central Portal, the `com.sinebloc` namespace is verified, and the signing
+key exists. What follows is the setup as it was done — needed again only on a fresh
+machine or by a second maintainer.
 
-## One-time setup
+## One-time setup (already done for this project)
 
 1. **Central Portal account** — https://central.sonatype.com
 
-2. **Verify the `com.sinebloc` namespace.** Add the DNS TXT record the Portal gives you
-   to `sinebloc.com`. The Portal checks the exact domain for the namespace and does not
-   try variations. Usually verifies in minutes.
+2. **Verify the `com.sinebloc` namespace** — done, via a DNS TXT record on
+   `sinebloc.com`. To repeat it elsewhere: add the TXT record the Portal
+   gives you to the exact domain the namespace names — the Portal checks that domain
+   and does not try variations. Usually verifies in minutes.
 
    If DNS is not available, the fallback is `io.github.<user>`, verified by creating a
    public repo named after the verification key — but then change `coordinates(...)` in
@@ -40,10 +43,16 @@ Portal). What is left is account-level setup that needs credentials, and it is o
 
 ## Cutting a release
 
+Bump `coordinates(...)` in `build.gradle.kts` and the two version strings in
+`README.md` (the dependency snippet and the version-catalog entry), then:
+
 ```bash
 ./gradlew publishToMavenLocal          # sanity check: artifacts, POM, sources, javadoc
-./gradlew publishAndReleaseToMavenCentral
+./gradlew publishAndReleaseToMavenCentral -PuseGpgCmd=true
 ```
+
+`-PuseGpgCmd=true` is what 0.1.0 was signed with — see the note on it in
+`build.gradle.kts`. Drop it if your key is one Gradle's bundled BouncyCastle can read.
 
 Use `publishToMavenCentral` instead if you want to inspect the staged deployment in the
 Portal and release it by hand.
@@ -51,7 +60,7 @@ Portal and release it by hand.
 Then tag it:
 
 ```bash
-git tag -a v0.1.0 -m "quiet-motion 0.1.0" && git push origin v0.1.0
+git tag -a v0.1.0 -m "quiet-motion 0.1.0" && git push origin v0.1.0   # 0.1.0: tagged
 ```
 
 ## Two things that cannot be undone

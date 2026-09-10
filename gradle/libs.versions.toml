@@ -8,6 +8,8 @@ compose-multiplatform = "1.11.1"
 # 0.37.0, released 2026-06-21. Targets the Central Portal, not legacy OSSRH.
 maven-publish = "0.37.0"
 
+androidx-activity = "1.11.0"
+
 android-compileSdk = "36"
 android-minSdk = "24"
 
@@ -16,7 +18,11 @@ compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.re
 compose-animation = { module = "org.jetbrains.compose.animation:animation", version.ref = "compose-multiplatform" }
 compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose-multiplatform" }
 
+# Sample app only. The library itself depends on nothing outside Compose.
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
+
 [plugins]
+androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }

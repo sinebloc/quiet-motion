@@ -6,3 +6,8 @@ local.properties
 *.hprof
 .kotlin/
 gradle/gradle-daemon-jvm.properties
+
+# Xcode, for sample/iosApp
+xcuserdata/
+*.xcworkspace/xcuserdata/
+DerivedData/

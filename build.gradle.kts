@@ -11,6 +11,11 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.mavenPublish)
+
+    // Applied by :sample:composeApp, resolved here so both modules agree on the version:
+    // AGP is already on the classpath via the plugin above, and Gradle refuses to
+    // re-resolve a versioned request for it in a subproject.
+    alias(libs.plugins.androidApplication) apply false
 }
 
 kotlin {

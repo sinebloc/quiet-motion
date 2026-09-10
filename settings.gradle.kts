@@ -1,5 +1,9 @@
 rootProject.name = "quiet-motion"
 
+// The library is the root project; the sample is a consumer of it that ships with the repo.
+include(":sample:shared")
+include(":sample:androidApp")
+
 pluginManagement {
     repositories {
         google {

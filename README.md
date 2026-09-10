@@ -1,5 +1,8 @@
 # quiet-motion
 
+[![Maven Central](https://img.shields.io/maven-central/v/com.sinebloc/quiet-motion.svg?label=Maven%20Central)](https://central.sonatype.com/artifact/com.sinebloc/quiet-motion)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
+
 Reduce-motion-safe animation primitives for Compose Multiplatform. Android and iOS.
 
 Two problems, both small, both easy to get wrong:
@@ -14,6 +17,18 @@ Two problems, both small, both easy to get wrong:
    somebody ill.
 
 This library is the answer to both, in about 300 lines.
+
+| Android | iOS |
+|---|---|
+| ![The sample running on Android](docs/media/android.gif) | ![The sample running on iOS](docs/media/ios.gif) |
+
+Same code both times — `sample/shared` is one `App()` composable. The list arrives
+staggered, scrolls away and back **without replaying**, replays when asked to, and then
+holds perfectly still once reduce motion is on: the entrance snaps in, `breathing()`
+stops at its end value, and the shimmer becomes a plain bar because `sweeping()` returns
+null. Nothing in the sample checks a reduce-motion flag; it provides the scale once.
+
+Run it yourself: [sample/README.md](sample/README.md).
 
 ## Platforms
 
@@ -34,25 +49,42 @@ simulator, so the dependency could not resolve there anyway.
 
 ## Install
 
-Publishing to Maven Central is wired up but **the first release has not been cut yet**
-(it needs namespace verification and a signing key — see [RELEASING.md](RELEASING.md)).
-Until then, clone this repo and:
-
-```
-./gradlew publishToMavenLocal
-```
-
-Then, with `mavenLocal()` in your repositories:
+Published to Maven Central as `com.sinebloc:quiet-motion`.
 
 ```kotlin
 // build.gradle.kts
-commonMain.dependencies {
-    implementation("com.sinebloc:quiet-motion:0.1.0")
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation("com.sinebloc:quiet-motion:0.1.0")
+        }
+    }
 }
 ```
 
+Version catalog, if you keep one:
+
+```toml
+# gradle/libs.versions.toml
+[libraries]
+quiet-motion = { module = "com.sinebloc:quiet-motion", version = "0.1.0" }
+```
+
 Compose pulls transitive `androidx` artifacts, so your repositories need `google()`
-alongside `mavenCentral()` — as any Compose Multiplatform consumer does.
+alongside `mavenCentral()` — as any Compose Multiplatform consumer does:
+
+```kotlin
+// settings.gradle.kts
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+```
+
+Building against an unreleased change is `./gradlew publishToMavenLocal` here, plus
+`mavenLocal()` in the consuming build. Cutting a release is [RELEASING.md](RELEASING.md).
 
 ## Provide the scale once
 
@@ -128,7 +160,9 @@ lives outside composition.
 
 Not covered: `breathing`, `sweeping` and `springMotion`. Their guards are early returns
 inside `@Composable` functions and need Compose UI test infrastructure this module does
-not carry. They are the three things to check by hand after changing anything here.
+not carry. They are the three things to check by hand after changing anything here — the
+sample's reduce-motion switch is there so that check takes a few seconds rather than a
+trip to Settings.
 
 ## License
 
