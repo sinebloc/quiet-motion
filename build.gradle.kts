@@ -1,3 +1,4 @@
+import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 // quiet-motion: reduce-motion-safe animation primitives for Compose Multiplatform.
@@ -56,6 +57,24 @@ kotlin {
     }
 }
 
+// `-PuseGpgCmd=true` signs by shelling out to the installed gpg binary instead of
+// Gradle's bundled BouncyCastle. Needed on a machine whose key GnuPG 2.4+ protected with
+// AEAD/Argon2: BouncyCastle cannot decrypt those and reports it as "checksum mismatch in
+// checksum of 20 bytes", which reads like a wrong passphrase and is not one. gpg itself
+// has no trouble with its own keyring.
+//
+// Configured outside the mavenPublishing block on purpose: `signing` inside that block
+// resolves to the extension's own private property, not the signing plugin's DSL.
+val useGpgCmd = providers.gradleProperty("useGpgCmd").orNull.toBoolean()
+if (useGpgCmd) {
+    // withPlugin rather than a direct configure: the signing plugin is applied lazily by
+    // signAllPublications() below, so configuring it eagerly here fails with "Extension
+    // with name 'signing' does not exist". This fires whenever it is applied, in any order.
+    pluginManager.withPlugin("signing") {
+        extensions.configure<SigningExtension>("signing") { useGpgCmd() }
+    }
+}
+
 mavenPublishing {
     // group:artifactId:version. `com.sinebloc` is the namespace verified with Central by
     // a DNS TXT record on sinebloc.com; the artifact is named for the repo rather than
@@ -85,7 +104,12 @@ mavenPublishing {
         "ORG_GRADLE_PROJECT_signingInMemoryKey",
         "ORG_GRADLE_PROJECT_signing_keyId",
     ).any { providers.environmentVariable(it).isPresent }
-    if (hasSigningKey) {
+    // `-PuseGpgCmd=true` signs by shelling out to the installed gpg binary instead of
+    // Gradle's bundled BouncyCastle. Needed on a machine whose key GnuPG 2.4+ protected
+    // with AEAD/Argon2: BouncyCastle cannot decrypt those and reports it as
+    // "checksum mismatch in checksum of 20 bytes", which reads like a wrong passphrase
+    // and is not one. gpg itself has no such trouble with its own keyring.
+    if (hasSigningKey || useGpgCmd) {
         signAllPublications()
     } else {
         logger.lifecycle(
