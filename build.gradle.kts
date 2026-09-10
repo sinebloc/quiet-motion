@@ -76,8 +76,15 @@ mavenPublishing {
     //   ORG_GRADLE_PROJECT_mavenCentralUsername / ...Password
     //   ORG_GRADLE_PROJECT_signingInMemoryKey  (ascii-armored private key)
     //   ORG_GRADLE_PROJECT_signingInMemoryKeyId / ...KeyPassword
-    val hasSigningKey = providers.gradleProperty("signing.keyId").isPresent ||
-        providers.gradleProperty("signingInMemoryKey").isPresent
+    // Checks the environment form too, not just Gradle properties: the key is often
+    // supplied as ORG_GRADLE_PROJECT_signingInMemoryKey for one command rather than
+    // written into a properties file, and missing that would skip signing silently.
+    val hasSigningKey = listOf("signing.keyId", "signingInMemoryKey").any {
+        providers.gradleProperty(it).isPresent
+    } || listOf(
+        "ORG_GRADLE_PROJECT_signingInMemoryKey",
+        "ORG_GRADLE_PROJECT_signing_keyId",
+    ).any { providers.environmentVariable(it).isPresent }
     if (hasSigningKey) {
         signAllPublications()
     } else {
